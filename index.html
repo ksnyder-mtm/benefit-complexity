@@ -87,13 +87,62 @@
         .score-group { background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border-light); }
         .score-group legend { display: block; color: #37474f; font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
         .score-group.full-width { grid-column: 1 / -1; }
-        .score-buttons { display: flex; gap: 8px; justify-content: space-between; }
-        .score-label { position: relative; }
-        .score-radio { opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer; }
-        .score-display { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 2px solid var(--border-light); background: white; border-radius: 8px; font-weight: 700; transition: all 0.3s ease; color: #455a64; font-size: 0.9rem; }
-        .score-label:hover .score-display { background: #e3f2fd; border-color: var(--primary-color); }
-        .score-radio:focus-visible + .score-display { box-shadow: 0 0 0 3px var(--focus-ring); border-color: var(--primary-color); }
-        .score-radio:checked + .score-display { background: var(--primary-gradient); color: white; border-color: var(--primary-color); transform: scale(1.1); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .score-slider-container { display: flex; flex-direction: column; gap: 8px; }
+        .score-slider { 
+            width: 100%; 
+            height: 6px; 
+            border-radius: 3px; 
+            background: var(--border-light);
+            outline: none; 
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .score-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .score-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .score-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .score-slider:focus {
+            background: #d1c4e9;
+        }
+        .score-display-value {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            background: var(--body-bg);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            min-width: 45px;
+        }
+        .score-markers {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
         .score-help { font-size: 0.8rem; color: #78909c; margin-top: 8px; font-style: italic; min-height: 1.2rem; }
 
         .driver-selector-inline { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 5px; }
@@ -449,7 +498,7 @@
         const setDrivers = (projectId, newDrivers) => { setState({ projects: state.projects.map(p => p.id === projectId ? { ...p, drivers: newDrivers } : p ) }); };
         const resetScores = async () => { if (await openModal({title: 'Reset All Scores?', text: 'This will set all benefit and complexity scores to zero.'})) { setState({ projects: state.projects.map(p => ({ ...p, benefit: 0, complexity: 0 })) }); } };
         const clearAll = async () => { if (await openModal({title: 'Clear All Projects?', text: 'This will permanently delete all projects and scores.'})) { setState({ ...initialState, isFormVisible: state.isFormVisible }); } };
-        const loadSampleData = async () => { if (await openModal({ title: 'Load Sample Data?', text: 'This will replace any existing projects.' })) { const sampleProjects = [ { id: 1, name: "Cyber-Security Baseline", description: "Establish minimum-viable criteria and survey programs.", drivers: ['d', 'c'], category: 'security', benefit: 4, complexity: 2 }, { id: 2, name: "Enterprise Risk Register", description: "A register for risks, owners, controls, and mitigation plans.", drivers: ['d', 'c'], category: 'compliance', benefit: 5, complexity: 4 }, { id: 3, name: "Quick-Win AI Adoption", description: "Publish vetted AI tools (e.g., Teams Co-pilot) with usage guard-rails.", drivers: ['b', 'c'], category: 'innovation', benefit: 4, complexity: 1 }, ]; setState({ projects: sampleProjects, nextId: 4, isFormVisible: false }); }};
+        const loadSampleData = async () => { if (await openModal({ title: 'Load Sample Data?', text: 'This will replace any existing projects.' })) { const sampleProjects = [ { id: 1, name: "Cyber-Security Baseline", description: "Establish minimum-viable criteria and survey programs.", drivers: ['d', 'c'], category: 'security', benefit: 4.2, complexity: 2.3 }, { id: 2, name: "Enterprise Risk Register", description: "A register for risks, owners, controls, and mitigation plans.", drivers: ['d', 'c'], category: 'compliance', benefit: 4.8, complexity: 3.7 }, { id: 3, name: "Quick-Win AI Adoption", description: "Publish vetted AI tools (e.g., Teams Co-pilot) with usage guard-rails.", drivers: ['b', 'c'], category: 'innovation', benefit: 3.9, complexity: 1.4 }, { id: 4, name: "Legacy System Migration", description: "Move critical systems to modern infrastructure with improved scalability.", drivers: ['b', 'd'], category: 'infrastructure', benefit: 3.5, complexity: 4.6 }, { id: 5, name: "Employee Training Portal", description: "Self-service learning platform with progress tracking and certifications.", drivers: ['e', 'b'], category: 'efficiency', benefit: 2.8, complexity: 2.1 } ]; setState({ projects: sampleProjects, nextId: 6, isFormVisible: false }); }};
         
         const parseCsvLine = (line) => { const regex = /(?:"([^"]*(?:""[^"]*)*)"|([^,]*))(?:,|$)/g; let values = []; let match; while ((match = regex.exec(line))) { let value = match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2]; values.push(value.trim()); if (match[0].slice(-1) !== ',') break; } return values; };
 
@@ -606,7 +655,7 @@
                     y_pos = 20;
                 }
 
-                const tableData = projects.map(p => [ p.name, `${p.benefit}/5`, `${p.complexity}/5`, p.description ]);
+                const tableData = projects.map(p => [ p.name, `${p.benefit.toFixed(1)}/5.0`, `${p.complexity.toFixed(1)}/5.0`, p.description ]);
                 
                 doc.autoTable({
                     startY: y_pos,
@@ -642,11 +691,27 @@
                 return;
             }
             dom.projectList.innerHTML = state.projects.map(p => {
-                const scoreButtons = (type, currentScore) => [1, 2, 3, 4, 5].map(score => `
-                    <label class="score-label" title="${type === 'benefit' ? CONSTANTS.benefitHelp[score] : CONSTANTS.complexityHelp[score]}">
-                        <input type="radio" class="score-radio" name="${type}-${p.id}" value="${score}" ${currentScore == score ? 'checked' : ''}>
-                        <span class="score-display">${score}</span>
-                    </label>`).join('');
+                const scoreSlider = (type, currentScore) => {
+                    const value = currentScore > 0 ? currentScore : 1;
+                    return `
+                        <div class="score-slider-container">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="range" 
+                                       class="score-slider" 
+                                       min="1" 
+                                       max="5" 
+                                       step="0.1" 
+                                       value="${value}" 
+                                       data-score-type="${type}"
+                                       data-project-id="${p.id}">
+                                <div class="score-display-value">${value.toFixed(1)}</div>
+                            </div>
+                            <div class="score-markers">
+                                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                            </div>
+                        </div>
+                    `;
+                };
                 
                 const driverCheckboxes = Object.entries(CONSTANTS.driverLabels).map(([key, label]) => `
                     <div class="driver-option-inline">
@@ -671,8 +736,8 @@
                                 <legend>Primary Drivers</legend>
                                 <div class="driver-selector-inline">${driverCheckboxes}</div>
                             </fieldset>
-                            <fieldset class="score-group" data-score-type="benefit"><legend>Benefit</legend><div class="score-buttons">${scoreButtons('benefit', p.benefit)}</div><div class="score-help">${p.benefit > 0 ? CONSTANTS.benefitHelp[p.benefit] : 'Rate the expected benefit'}</div></fieldset>
-                            <fieldset class="score-group" data-score-type="complexity"><legend>Complexity</legend><div class="score-buttons">${scoreButtons('complexity', p.complexity)}</div><div class="score-help">${p.complexity > 0 ? CONSTANTS.complexityHelp[p.complexity] : 'Rate the implementation complexity'}</div></fieldset>
+                            <fieldset class="score-group" data-score-type="benefit"><legend>Benefit</legend>${scoreSlider('benefit', p.benefit)}<div class="score-help">${p.benefit > 0 ? CONSTANTS.benefitHelp[Math.round(p.benefit)] : 'Rate the expected benefit'}</div></fieldset>
+                            <fieldset class="score-group" data-score-type="complexity"><legend>Complexity</legend>${scoreSlider('complexity', p.complexity)}<div class="score-help">${p.complexity > 0 ? CONSTANTS.complexityHelp[Math.round(p.complexity)] : 'Rate the implementation complexity'}</div></fieldset>
                         </div>
                     </div>
                 </div>`;
@@ -759,13 +824,29 @@
             }
         });
 
+        // Real-time slider updates
+        dom.projectList.addEventListener('input', (e) => {
+            if (e.target.matches('.score-slider')) {
+                const scoreType = e.target.dataset.scoreType;
+                const projectId = parseInt(e.target.dataset.projectId, 10);
+                const value = parseFloat(e.target.value);
+                
+                // Update the display value in real-time
+                const displayValue = e.target.parentElement.querySelector('.score-display-value');
+                displayValue.textContent = value.toFixed(1);
+            }
+        });
+
         dom.projectList.addEventListener('change', (e) => {
             const pItem = e.target.closest('.project-item');
             if (!pItem) return;
             const pId = parseInt(pItem.dataset.projectId, 10);
             
-            if (e.target.matches('.score-radio')) {
-                setScore(pId, e.target.closest('.score-group').dataset.scoreType, parseInt(e.target.value, 10));
+            if (e.target.matches('.score-slider')) {
+                const scoreType = e.target.dataset.scoreType;
+                const projectId = parseInt(e.target.dataset.projectId, 10);
+                const value = parseFloat(e.target.value);
+                setScore(projectId, scoreType, value);
             } else if (e.target.matches('input[name^="driver-"]')) {
                 const driverContainer = e.target.closest('[data-driver-id]');
                 const selectedDrivers = Array.from(driverContainer.querySelectorAll('input:checked')).map(cb => cb.value);
@@ -777,7 +858,7 @@
         dom.buttons.toggleLabels.addEventListener('click', () => setState({ labelsVisible: !state.labelsVisible }));
         dom.buttons.cancelForm.addEventListener('click', () => { dom.addProjectForm.reset(); setState({ isFormVisible: false }); });
         dom.addProjectForm.addEventListener('submit', (e) => { e.preventDefault(); const name = e.target.projectName.value.trim(), desc = e.target.projectDescription.value.trim(); const drivers = Array.from(e.target.querySelectorAll('input[name="drivers"]:checked')).map(cb => cb.value); if (!name || !desc || drivers.length === 0) { openModal({title:'Missing Information', text:'Please fill in Name, Description, and select at least one Driver.', isConfirmation: false}); return; } addProject({ name, description: desc, category: e.target.projectCategory.value, drivers }); e.target.reset(); });
-        dom.matrixGrid.addEventListener('mouseover', (e) => { if (!e.target.matches('.matrix-point')) return; const p = state.projects.find(p => p.id === parseInt(e.target.dataset.projectId, 10)); if (!p) return; dom.tooltip.querySelector('.tooltip-name').textContent = p.name; dom.tooltip.querySelector('.tooltip-scores').textContent = `Benefit: ${p.benefit} | Complexity: ${p.complexity}`; dom.tooltip.classList.add('show'); const cRect = dom.matrixGrid.getBoundingClientRect(), pRect = e.target.getBoundingClientRect(); dom.tooltip.style.left = `${pRect.left - cRect.left + pRect.width / 2}px`; dom.tooltip.style.bottom = `${cRect.bottom - pRect.top + 10}px`; });
+        dom.matrixGrid.addEventListener('mouseover', (e) => { if (!e.target.matches('.matrix-point')) return; const p = state.projects.find(p => p.id === parseInt(e.target.dataset.projectId, 10)); if (!p) return; dom.tooltip.querySelector('.tooltip-name').textContent = p.name; dom.tooltip.querySelector('.tooltip-scores').textContent = `Benefit: ${p.benefit.toFixed(1)} | Complexity: ${p.complexity.toFixed(1)}`; dom.tooltip.classList.add('show'); const cRect = dom.matrixGrid.getBoundingClientRect(), pRect = e.target.getBoundingClientRect(); dom.tooltip.style.left = `${pRect.left - cRect.left + pRect.width / 2}px`; dom.tooltip.style.bottom = `${cRect.bottom - pRect.top + 10}px`; });
         dom.matrixGrid.addEventListener('mouseout', (e) => { if (e.target.matches('.matrix-point')) dom.tooltip.classList.remove('show'); });
         dom.buttons.loadSample.addEventListener('click', loadSampleData);
         dom.buttons.resetScores.addEventListener('click', resetScores);
