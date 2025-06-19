@@ -20,8 +20,10 @@ Projects automatically fall into four quadrants:
 ## Features
 
 ### Core Functionality
-- **Interactive Scoring**: Rate projects on benefit (1-5) and complexity (1-5) scales
-- **Real-time Visualization**: Projects appear on the matrix as soon as they're scored
+- **Precision Scoring**: Rate projects using smooth range sliders with decimal precision (1.0-5.0)
+- **Real-time Feedback**: Slider values update instantly as you drag, showing exact scores (e.g., 3.7, 4.2)
+- **Smart Label Control**: Toggle project labels on/off to reduce visual clutter when many projects are plotted
+- **Real-time Visualization**: Projects appear on the matrix immediately as they're scored
 - **Driver-based Categorization**: Tag projects with primary drivers:
   - Mission Impact (Red)
   - Efficiency (Green)
@@ -31,18 +33,20 @@ Projects automatically fall into four quadrants:
 
 ### Data Management
 - **Flexible Input**: Add projects manually through an intuitive form
-- **Bulk Import**: Upload projects via CSV files
+- **Bulk Import**: Upload projects via CSV files with decimal score support
 - **Export Capabilities**: 
-  - CSV export for further analysis
-  - PDF reports with executive summary and matrix visualization
-- **Local Storage**: All data persists between sessions
-- **Sample Data**: Load example projects to explore functionality
+  - CSV export with decimal precision for detailed analysis
+  - PDF reports with executive summary and high-resolution matrix visualization
+- **Persistent Storage**: All data including decimal scores persists between sessions
+- **Enhanced Sample Data**: Load example projects with realistic decimal scores
 
 ### User Experience
-- **Progress Tracking**: Visual progress bar shows scoring completion
-- **Hover Details**: See project information by hovering over matrix points
-- **Responsive Design**: Works on desktop and tablet devices
-- **No Installation Required**: Runs entirely in the browser
+- **Intuitive Sliders**: Modern range controls with visual markers and real-time value display
+- **Clean Matrix View**: Labels hidden by default, show on hover or toggle all visible
+- **Progress Tracking**: Visual progress bar shows scoring completion percentage
+- **Enhanced Tooltips**: Detailed project information with decimal scores on hover
+- **Responsive Design**: Optimized for desktop and tablet devices
+- **Zero Installation**: Runs entirely in the browser with no dependencies
 
 ## Getting Started
 
@@ -59,7 +63,15 @@ Projects automatically fall into four quadrants:
    - Primary Drivers (select at least one)
 3. Optionally add a category
 4. Click "Add Project"
-5. Score the project using the 1-5 scale for both benefit and complexity
+5. Score the project using precision sliders:
+   - **Benefit slider**: Drag to set value between 1.0-5.0 (e.g., 3.7)
+   - **Complexity slider**: Drag to set value between 1.0-5.0 (e.g., 2.3)
+   - Values update in real-time as you drag
+
+### Matrix Navigation
+- **Show/Hide Labels**: Click "Show Labels" to toggle all project names on the matrix
+- **Hover for Details**: Hover over any project dot to see name and exact scores
+- **Visual Feedback**: Labels appear automatically when hovering over individual projects
 
 ### Importing Projects
 1. Click "Import CSV"
@@ -68,10 +80,10 @@ Projects automatically fall into four quadrants:
    - `description` (required)
    - `category` (optional)
    - `drivers` (optional, semicolon-separated)
-   - `benefit` (optional, 1-5)
-   - `complexity` (optional, 1-5)
+   - `benefit` (optional, decimal values 1.0-5.0)
+   - `complexity` (optional, decimal values 1.0-5.0)
 3. Select your CSV file
-4. Review imported projects
+4. Review imported projects with their decimal scores
 
 ### Exporting Results
 - **CSV Export**: Click "Export CSV" to download all project data
@@ -125,11 +137,13 @@ benefit-complexity/
 
 ## Tips for Effective Use
 
-1. **Be Consistent**: Establish clear criteria for benefit and complexity ratings
-2. **Involve Stakeholders**: Use the tool in collaborative sessions
-3. **Regular Reviews**: Update scores as projects evolve
-4. **Focus on Quick Wins**: Start with high-benefit, low-complexity projects
-5. **Document Assumptions**: Use descriptions to capture key considerations
+1. **Be Consistent**: Establish clear criteria for benefit and complexity ratings across your team
+2. **Use Decimal Precision**: Take advantage of decimal scoring (e.g., 3.7 vs 4.0) to distinguish between similar projects
+3. **Involve Stakeholders**: Use the tool in collaborative sessions for consensus building
+4. **Toggle Labels Wisely**: Hide labels for clean overview, show them when discussing specific projects
+5. **Regular Reviews**: Update scores as projects evolve and new information becomes available
+6. **Focus on Quick Wins**: Start with high-benefit, low-complexity projects for immediate impact
+7. **Document Assumptions**: Use descriptions to capture key considerations and scoring rationale
 
 ## Privacy & Security
 
@@ -160,14 +174,26 @@ For issues, questions, or suggestions:
 
 ## Changelog
 
-### Version 1.0 (Current)
+### Version 1.2 (Current)
+- **🎯 Precision Scoring**: Replaced 1-5 radio buttons with smooth range sliders supporting decimal values (1.0-5.0)
+- **👁️ Smart Labels**: Added toggle button to show/hide project labels on matrix for cleaner visualization
+- **🎨 Enhanced UX**: Real-time slider feedback with visual markers and live value display
+- **📊 Improved Exports**: PDF and CSV exports now include decimal precision formatting
+- **🗃️ Better Sample Data**: Enhanced sample projects with realistic decimal scores for demonstration
+
+### Version 1.1
+- Matrix visualization improvements
+- Enhanced hover tooltips
+- Performance optimizations
+
+### Version 1.0
 - Initial release
 - Core matrix functionality
 - CSV import/export
 - PDF report generation
 - Local storage persistence
 - Driver-based categorization
-- Sample data loading
+- Basic sample data loading
 
 ---
 
