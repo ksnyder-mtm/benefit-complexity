@@ -142,19 +142,35 @@
         .matrix-point-label {
             position: absolute;
             transform: translate(15px, -15px);
-            background-color: rgba(255, 255, 255, 0.85);
+            background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(2px);
-            padding: 4px 8px;
+            padding: 6px 10px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
             white-space: nowrap;
             pointer-events: none;
             z-index: 12;
             transition: all 0.2s ease-out;
-            opacity: 0.7;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* Show labels when toggled on */
+        .matrix-grid.show-labels .matrix-point-label {
+            opacity: 0.9;
+            visibility: visible;
+        }
+        
+        /* Enhanced hover effect */
+        .matrix-point:hover + .matrix-point-label {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translate(15px, -15px) scale(1.05);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
         }
         
         .matrix-tooltip { position: absolute; background: #37474f; color: white; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; pointer-events: none; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; z-index: 20; max-width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transform: translateY(10px); }
@@ -239,6 +255,7 @@
             <button class="btn btn-primary" id="importBtn">Import CSV</button>
             <button class="btn btn-primary" id="exportBtn">Export CSV</button>
             <button class="btn btn-primary" id="exportPdfBtn">Export PDF</button>
+            <button class="btn btn-secondary" id="toggleLabelsBtn">Show Labels</button>
             <button class="btn btn-secondary" id="resetScoresBtn">Reset Scores</button>
             <button class="btn btn-secondary" id="loadSampleBtn">Load Sample</button>
             <button class="btn btn-danger" id="clearAllBtn">Clear All</button>
@@ -379,13 +396,14 @@
                 import: document.getElementById('importBtn'),
                 export: document.getElementById('exportBtn'),
                 exportPdf: document.getElementById('exportPdfBtn'),
+                toggleLabels: document.getElementById('toggleLabelsBtn'),
                 resetScores: document.getElementById('resetScoresBtn'),
                 loadSample: document.getElementById('loadSampleBtn'),
                 clearAll: document.getElementById('clearAllBtn'),
             }
         };
         
-        const initialState = { projects: [], nextId: 1, isFormVisible: false };
+        const initialState = { projects: [], nextId: 1, isFormVisible: false, labelsVisible: false };
         let state = { ...initialState };
 
         const saveState = () => localStorage.setItem(CONSTANTS.STORAGE_KEY, JSON.stringify(state));
@@ -402,6 +420,7 @@
             updateProgress();
             updateProjectCounter();
             renderForm();
+            updateLabelVisibility();
         };
 
         const setState = (newState) => {
@@ -612,6 +631,11 @@
         // --- RENDER FUNCTIONS ---
         const renderForm = () => { dom.addProjectForm.classList.toggle('active', state.isFormVisible); dom.buttons.toggleForm.textContent = state.isFormVisible ? '× Hide Form' : '+ Add Project'; };
         
+        const updateLabelVisibility = () => {
+            dom.matrixGrid.classList.toggle('show-labels', state.labelsVisible);
+            dom.buttons.toggleLabels.textContent = state.labelsVisible ? 'Hide Labels' : 'Show Labels';
+        };
+        
         const renderProjects = () => {
             if (state.projects.length === 0) {
                 dom.projectList.innerHTML = `<div class="empty-state"><h3>No projects yet</h3><p>Click "+ Add Project" to get started, or load sample data.</p></div>`;
@@ -750,6 +774,7 @@
         });
 
         dom.buttons.toggleForm.addEventListener('click', () => setState({ isFormVisible: !state.isFormVisible }));
+        dom.buttons.toggleLabels.addEventListener('click', () => setState({ labelsVisible: !state.labelsVisible }));
         dom.buttons.cancelForm.addEventListener('click', () => { dom.addProjectForm.reset(); setState({ isFormVisible: false }); });
         dom.addProjectForm.addEventListener('submit', (e) => { e.preventDefault(); const name = e.target.projectName.value.trim(), desc = e.target.projectDescription.value.trim(); const drivers = Array.from(e.target.querySelectorAll('input[name="drivers"]:checked')).map(cb => cb.value); if (!name || !desc || drivers.length === 0) { openModal({title:'Missing Information', text:'Please fill in Name, Description, and select at least one Driver.', isConfirmation: false}); return; } addProject({ name, description: desc, category: e.target.projectCategory.value, drivers }); e.target.reset(); });
         dom.matrixGrid.addEventListener('mouseover', (e) => { if (!e.target.matches('.matrix-point')) return; const p = state.projects.find(p => p.id === parseInt(e.target.dataset.projectId, 10)); if (!p) return; dom.tooltip.querySelector('.tooltip-name').textContent = p.name; dom.tooltip.querySelector('.tooltip-scores').textContent = `Benefit: ${p.benefit} | Complexity: ${p.complexity}`; dom.tooltip.classList.add('show'); const cRect = dom.matrixGrid.getBoundingClientRect(), pRect = e.target.getBoundingClientRect(); dom.tooltip.style.left = `${pRect.left - cRect.left + pRect.width / 2}px`; dom.tooltip.style.bottom = `${cRect.bottom - pRect.top + 10}px`; });
